@@ -25,11 +25,47 @@ import Paper from '@mui/material/Paper';
 import Navbar from '../components/Navbar'
 
 import { POPULAR_AUTHORS } from '../utils/constants/popular_authors';
-
+import { getAuthor } from '../utils/api/getAuthor';
+import { getAuthorWorks } from '../utils/api/getAuthorWorks';
 
 export default function Home() {
+  const [authorKey, setAuthorKey]= useState("OL23919A")
+  const [authorData, setAuthorData] = useState("OL23919A")
+  const [authorWorks, setAuthorWorks] = useState([])
 
-  return (
+  // get the Author's information data everytime the author key is changed
+  useEffect(()=>{
+    // console.log(authorKey)
+    getAuthor(authorKey).then((data)=>{
+      // console.log(data)
+      setAuthorData(data)
+    })
+  },[authorKey])
+
+  // get author works for the default author key
+  useEffect(()=>{
+    getAuthorWorks(authorKey).then((data)=>{
+      // console.log(data.entries)
+      setAuthorWorks(data.entries)
+    })
+  },[]) 
+
+  // get the Author's works when the author key is changed:
+  useEffect(()=>{
+    getAuthorWorks(authorKey).then((data)=>{
+      // console.log(data)
+      setAuthorWorks(data.entries)
+    })
+  },[authorKey])
+
+  // get the author ID from the popular author list and set author key
+  const authorHandler = (authorID)=>{
+    // console.log(authorID)
+    setAuthorKey(authorID)
+  }
+
+
+  return <>
     <div>
       <Head>
         <title>Library App</title>
@@ -49,10 +85,15 @@ export default function Home() {
                   color="text.primary"
                   gutterBottom
                 >
-                  NAME HERE
+                  {authorData.name}
                 </Typography>
                 <Typography  align="center" color="text.primary" paragraph>
-                  BIRTHDATE HERE - DEATHDATE OR PRESENT DAY HERE
+                  {authorData.birth_date} -
+                  {!authorData.death_date ?
+                  " Present Day"
+                  :
+                  authorData.death_date
+                  }
                 </Typography>
                 <TableContainer component={Paper}>
                     <Table>
@@ -62,13 +103,13 @@ export default function Home() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {/* */}
-                        <TableRow>
-                            <TableCell>
-                                Sample Row
-                            </TableCell>
-                        </TableRow>
-                        {/* */}
+                      {authorWorks.map((list, index)=>{
+                        return <TableRow key={index}>
+                        <TableCell>
+                            {list.title}
+                        </TableCell>
+                    </TableRow>
+                      })}
                     </TableBody>
                     </Table>
                 </TableContainer>
@@ -95,7 +136,7 @@ export default function Home() {
                       <ListItem
                         secondaryAction={
                           <Button
-                           
+                          onClick={()=>{authorHandler(author.key)}}
                           >show</Button>
                         }
                       >
@@ -112,5 +153,5 @@ export default function Home() {
         </Container>
       </main>
     </div>
-  )
+  </>
 }
