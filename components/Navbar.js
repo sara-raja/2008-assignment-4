@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box'
@@ -15,13 +15,15 @@ export default function Navbar(props) {
     /* Bonus Add useEffect here listen to search changes
       and fetch from the "searchAuthor" api documented here
     */
-
+    useEffect(()=>{
+      console.log(search)
+    },[search])
 
 
     const changeAuthorKey = (newAuthorKey) => {
     
       /* Call your function with passed in via props here */ 
-      
+      // console.log(newAuthorKey)
 
     }
 
